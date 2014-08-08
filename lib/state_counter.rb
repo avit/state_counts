@@ -5,19 +5,18 @@ class StateCounter
   end
 
   def count(records)
-    @finder.all.each_with_object(Hash.new) { |state, totals|
-      totals[state] = extract_count_by(state, records)
+    records.each_with_object(empty_counts) { |r, totals|
+      if state = @finder.find(r.state, r.country)
+        totals[state] += r.count
+      end
     }
   end
 
-  def extract_count_by(state, records)
-    matches = []
-    records.delete_if do |r|
-      if state == @finder.find(r.state, r.country)
-        matches << r
-      end
-    end
-    matches.reduce(0) { |a, r| a + r.count }
+  def empty_counts
+    @finder.all.inject(Hash.new) { |counts, state|
+      counts[state] = 0
+      counts
+    }
   end
 
 end
