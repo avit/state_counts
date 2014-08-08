@@ -1,5 +1,7 @@
 class StateCounter
 
+  attr_accessor :matched_states_only
+
   def initialize(finder)
     @finder = finder
   end
@@ -13,6 +15,7 @@ class StateCounter
   end
 
   def empty_counts
+    return Hash.new(0) if matched_states_only
     @finder.all.inject(Hash.new) { |counts, state|
       counts[state] = 0
       counts
